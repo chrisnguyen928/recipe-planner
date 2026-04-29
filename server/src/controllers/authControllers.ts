@@ -15,7 +15,20 @@ type authBody = {
     password?: string
 }
 
-export async function registerUser(req: Request<authBody>, res: Response) {
+type authResponse = {
+    token?: string,
+    user?: {
+        id?: number,
+        email?: string,
+        name?: string,
+        password?: string,
+        createdAt?: Date | null
+    },
+    message?: string
+
+}
+
+export async function registerUser(req: Request<authBody>, res: Response<authResponse>) {
     const { email, name, password } = req.body
 
     if (!email || !name || !password) {
@@ -30,9 +43,9 @@ export async function registerUser(req: Request<authBody>, res: Response) {
         .limit(1)
 
         if (existingUser.length > 0) {
-            res.status(409).json({ message: "Email already in use by another user" })
+            return res.status(409).json({ message: "Email already in use by another user" })
         }
-
+      
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
 
@@ -58,12 +71,14 @@ export async function registerUser(req: Request<authBody>, res: Response) {
             message: "New user registered successfully"
         })
     } catch (err) {
-        console.error('Failed to create new user: ', err)
+        console.error('Full error object: ', JSON.stringify(err, null, 2))
+        console.error('Error cause:', (err as any)?.cause)
+        console.error('Error message:', (err as any)?.message)
         res.status(503).json({ message: "Server is unable to handle request" })
     }
 }
 
-export async function loginUser(req: Request<authBody>, res: Response) {
+export async function loginUser(req: Request<authBody>, res: Response<authResponse>) {
     const { email, password } = req.body
 
     if (!email || !password) {
@@ -102,5 +117,15 @@ export async function loginUser(req: Request<authBody>, res: Response) {
     } catch (err) {
         console.error('Login error: ', err)
         res.status(503).json({ message: "Server is unable to handle request"})
+    }
+}
+
+export async function logoutUser(req: Request, res: Response) {
+    try {
+        res.clearCookie('token')
+        res.json({ message: "User logged out successfully" })
+    } catch (err) {
+        console.error('Failed to log out user: ', err)
+        res.status(503).json({ message: "Server is unable to handle request" })
     }
 }
