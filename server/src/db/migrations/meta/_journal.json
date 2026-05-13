@@ -8,6 +8,41 @@
       "when": 1776103482021,
       "tag": "0000_plain_darwin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777571611907,
+      "tag": "0001_cultured_dazzler",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777670922353,
+      "tag": "0002_black_logan",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777675133347,
+      "tag": "0003_windy_nebula",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1778700578427,
+      "tag": "0004_little_jackpot",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1778706852783,
+      "tag": "0005_far_photon",
+      "breakpoints": true
     }
   ]
 }

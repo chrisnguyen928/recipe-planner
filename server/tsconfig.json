@@ -6,6 +6,8 @@
         "rootDir": "./src",
         "outDir": "./dist",
         "strict": true,
+        "esModuleInterop": true,
+        "typeRoots": ["./src/types", "./node_modules/@types"]
     }, 
     "include": ["src/**/*"],
     "exclude": ["drizzle.config.ts"]

@@ -9,13 +9,13 @@ import { users } from '../db/schema'
 
 dotenv.config()
 
-type authBody = {
+type AuthBody = {
     email?: string,
     name?: string,
     password?: string
 }
 
-type authResponse = {
+type AuthResponse = {
     token?: string,
     user?: {
         id?: number,
@@ -28,7 +28,7 @@ type authResponse = {
 
 }
 
-export async function registerUser(req: Request<authBody>, res: Response<authResponse>) {
+export async function registerUser(req: Request<{}, unknown, AuthBody, {}>, res: Response<AuthResponse>) {
     const { email, name, password } = req.body
 
     if (!email || !name || !password) {
@@ -37,10 +37,10 @@ export async function registerUser(req: Request<authBody>, res: Response<authRes
 
     try {
         const existingUser = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1)
+            .select()
+            .from(users)
+            .where(eq(users.email, email))
+            .limit(1)
 
         if (existingUser.length > 0) {
             return res.status(409).json({ message: "Email already in use by another user" })
@@ -50,20 +50,20 @@ export async function registerUser(req: Request<authBody>, res: Response<authRes
         const hashedPassword = await bcrypt.hash(password, salt)
 
         const [newUser] = await db
-        .insert(users)
-        .values({
-            email,
-            password: hashedPassword,
-            name
-        })
-        .returning({
-            id: users.id,
-            email: users.email,
-            name: users.name,
-            createdAt: users.createdAt
-        })
+            .insert(users)
+            .values({
+                email,
+                password: hashedPassword,
+                name
+            })
+            .returning({
+                id: users.id,
+                email: users.email,
+                name: users.name,
+                createdAt: users.createdAt
+            })
 
-        const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET!, { expiresIn: '7d' })
+        const token = jwt.sign({ userId: newUser.id, email: newUser.email }, process.env.JWT_SECRET!, { expiresIn: '7d' })
 
         return res.status(201).json({
             token,
@@ -74,11 +74,11 @@ export async function registerUser(req: Request<authBody>, res: Response<authRes
         console.error('Full error object: ', JSON.stringify(err, null, 2))
         console.error('Error cause:', (err as any)?.cause)
         console.error('Error message:', (err as any)?.message)
-        res.status(503).json({ message: "Server is unable to handle request" })
+        return res.status(500).json({ message: "Server is unable to handle request" })
     }
 }
 
-export async function loginUser(req: Request<authBody>, res: Response<authResponse>) {
+export async function loginUser(req: Request<{}, unknown, AuthBody, {}>, res: Response<AuthResponse>) {
     const { email, password } = req.body
 
     if (!email || !password) {
@@ -87,10 +87,10 @@ export async function loginUser(req: Request<authBody>, res: Response<authRespon
 
     try {
         const [existingUser] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1)
+            .select()
+            .from(users)
+            .where(eq(users.email, email))
+            .limit(1)
 
         if (!existingUser) {
             return res.status(409).json({ message: "Invalid email" })
@@ -116,7 +116,7 @@ export async function loginUser(req: Request<authBody>, res: Response<authRespon
 
     } catch (err) {
         console.error('Login error: ', err)
-        res.status(503).json({ message: "Server is unable to handle request"})
+        return res.status(500).json({ message: "Server is unable to handle request"})
     }
 }
 
@@ -126,6 +126,6 @@ export async function logoutUser(req: Request, res: Response) {
         res.json({ message: "User logged out successfully" })
     } catch (err) {
         console.error('Failed to log out user: ', err)
-        res.status(503).json({ message: "Server is unable to handle request" })
+        return res.status(500).json({ message: "Server is unable to handle request" })
     }
 }

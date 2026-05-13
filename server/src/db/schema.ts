@@ -33,8 +33,8 @@ export const ingredients = pgTable('ingredients', {
 
 export const recipeIngredients = pgTable('recipe_ingredients', {
     id: serial('id').primaryKey(),
-    ingredientId: integer('ingredient_id').references(() => ingredients.id, { onDelete: 'cascade' }),
-    recipeId: integer('recipe_id').references(() => recipes.id),
+    ingredientId: integer('ingredient_id').references(() => ingredients.id, { onDelete: 'cascade' }).notNull(),
+    recipeId: integer('recipe_id').references(() => recipes.id, { onDelete: 'cascade' }).notNull(),
     quantity: numeric('quantity').notNull(),
     unit: unitEnum('unit').notNull()
 })
@@ -42,6 +42,7 @@ export const recipeIngredients = pgTable('recipe_ingredients', {
 export const mealPlans = pgTable('meal_plans', {
     id: serial('id').primaryKey(),
     userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+    name: varchar('name', { length: 200 }).notNull().unique(),
     weekStartDate: date('week_start_date').notNull()
 })
 
@@ -62,7 +63,7 @@ export const groceryLists = pgTable('grocery_lists', {
 export const groceryListItems = pgTable('grocery_list_items', {
     id: serial('id').primaryKey(),
     groceryListId: integer('grocery_list_id').references(() => groceryLists.id, { onDelete: 'cascade' }),
-    ingredientId: integer('ingredient_id').references(() => ingredients.id),
+    ingredientId: integer('ingredient_id').references(() => ingredients.id, { onDelete: 'cascade'} ),
     totalQuantity: numeric('total_quantity').notNull(),
     unit: unitEnum('unit').notNull(),
     isChecked: boolean('is_checked').default(false)

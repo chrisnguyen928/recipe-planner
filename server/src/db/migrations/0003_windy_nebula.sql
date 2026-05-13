@@ -1,0 +1,1 @@
+ALTER TABLE "recipe_ingredients" ALTER COLUMN "ingredient_id" SET NOT NULL;
