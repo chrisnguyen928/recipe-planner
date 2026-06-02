@@ -15,7 +15,6 @@ type RecipeContent = {
     description?: string,
     ingredient?: IngredientContent[],
     quantity?: number,
-    unit?: string,
     prepTime?: number,
     cookTime?: number,
     servings?: number
@@ -83,7 +82,7 @@ export async function getRecipes(req: Request<{}, unknown, {}, RecipeContent>, r
 export async function createRecipe(req: Request<{}, unknown, RecipeContent, {}>, res: Response) {
     const { name, description, ingredient: ingredientInputs, prepTime, cookTime, servings } = req.body
 
-    if (!name || !ingredientInputs) {
+    if (!name || !ingredientInputs || ingredientInputs.length === 0) {
         return res.status(400).json({ message: "Recipe name and ingredients are required" })
     }
 
@@ -196,7 +195,7 @@ export async function updateRecipe(req: Request<{id: string}, unknown, RecipeCon
             .limit(1)
         
         if (!existingRecipe) {
-            return res.status(409).json({ message: "Recipe does not exist" })
+            return res.status(404).json({ message: "Recipe does not exist" })
         }
 
         const [updatedRecipe] = await db 
@@ -295,7 +294,7 @@ export async function deleteRecipe(req: Request<{id: string}, unknown, {}, {}>, 
             .limit(1)
         
         if (!existingRecipe) {
-            return res.status(409).json({ message: "Recipe does not exist" })
+            return res.status(404).json({ message: "Recipe does not exist" })
         }
 
         const [deletedRecipe] = await db
@@ -307,6 +306,11 @@ export async function deleteRecipe(req: Request<{id: string}, unknown, {}, {}>, 
         .returning({
             id: recipes.id,
             name: recipes.name
+        })
+
+        return res.status(200).json({
+            message: "Recipe successfully deleted",
+            deleted: deletedRecipe
         })
 
     } catch (err) {

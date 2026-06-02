@@ -2,6 +2,8 @@ import express from 'express'
 import type { Request, Response } from 'express'
 import { db } from './db/index'
 import authRoutes from './routes/authRoutes'
+import authMiddleware from './middleware/authMiddleware'
+import mealPlanRoutes from './routes/mealPlanRoutes'
 import recipeRoutes from './routes/recipeRoutes'
 
 const app = express()
@@ -10,7 +12,8 @@ const PORT = 8000
 
 app.use(express.json())
 
-app.use('/api/recipes', recipeRoutes)
+app.use('/api/meal-plans', authMiddleware, mealPlanRoutes)
+app.use('/api/recipes', authMiddleware, recipeRoutes)
 app.use('/api/auth', authRoutes)
 
 app.use((req: Request, res: Response<{ message: string }>) => {

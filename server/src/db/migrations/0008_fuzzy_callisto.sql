@@ -1,0 +1,1 @@
+ALTER TABLE "recipe_ingredients" ADD COLUMN "created_at" timestamp DEFAULT now();

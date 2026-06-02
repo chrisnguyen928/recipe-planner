@@ -1,0 +1,1 @@
+ALTER TABLE "recipes" ADD CONSTRAINT "recipes_name_unique" UNIQUE("name");

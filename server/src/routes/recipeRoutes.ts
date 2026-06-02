@@ -9,6 +9,6 @@ router.post('/', createRecipe)
 
 router.put('/:id', updateRecipe)
 
-router.delete('/:id')
+router.delete('/:id', deleteRecipe)
 
 export default router

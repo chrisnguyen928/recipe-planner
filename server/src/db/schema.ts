@@ -17,8 +17,8 @@ export const users = pgTable('users', {
 
 export const recipes = pgTable('recipes', {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
-    name: varchar('name', { length: 200 }).notNull(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    name: varchar('name', { length: 200 }).notNull().unique(),
     description: text('description'),
     prepTime: integer('pre_time'),
     cookTime: integer('cook_time'),
@@ -41,29 +41,30 @@ export const recipeIngredients = pgTable('recipe_ingredients', {
 
 export const mealPlans = pgTable('meal_plans', {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
     name: varchar('name', { length: 200 }).notNull().unique(),
-    weekStartDate: date('week_start_date').notNull()
+    weekStartDate: date('week_start_date').notNull(),
+    createdAt: timestamp('created_at').defaultNow()
 })
 
 export const mealPlanEntries = pgTable('meal_plan_entries', {
     id: serial('id').primaryKey(),
-    mealPlanId: integer('meal_plan_id').references(() => mealPlans.id, { onDelete: 'cascade' }),
-    recipeId: integer('recipe_id').references(() => recipes.id),
+    mealPlanId: integer('meal_plan_id').references(() => mealPlans.id, { onDelete: 'cascade' }).notNull(),
+    recipeId: integer('recipe_id').references(() => recipes.id, { onDelete: 'cascade' }).notNull(),
     dayOfWeek: daysOfWeekEnum('day_of_week').notNull(),
     mealType: mealTypeEnum('meal_type').notNull()
 })
 
 export const groceryLists = pgTable('grocery_lists', {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
     generatedAt: timestamp('generated_at').defaultNow()
 })
 
 export const groceryListItems = pgTable('grocery_list_items', {
     id: serial('id').primaryKey(),
-    groceryListId: integer('grocery_list_id').references(() => groceryLists.id, { onDelete: 'cascade' }),
-    ingredientId: integer('ingredient_id').references(() => ingredients.id, { onDelete: 'cascade'} ),
+    groceryListId: integer('grocery_list_id').references(() => groceryLists.id, { onDelete: 'cascade' }).notNull(),
+    ingredientId: integer('ingredient_id').references(() => ingredients.id, { onDelete: 'cascade'} ).notNull(),
     totalQuantity: numeric('total_quantity').notNull(),
     unit: unitEnum('unit').notNull(),
     isChecked: boolean('is_checked').default(false)

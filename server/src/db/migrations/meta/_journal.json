@@ -43,6 +43,62 @@
       "when": 1778706852783,
       "tag": "0005_far_photon",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1779152774409,
+      "tag": "0006_busy_angel",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1779386039227,
+      "tag": "0007_whole_kylun",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1779387352189,
+      "tag": "0008_fuzzy_callisto",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1779387409943,
+      "tag": "0009_clear_revanche",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1779916227764,
+      "tag": "0010_calm_amphibian",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1780347673340,
+      "tag": "0011_safe_vermin",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1780350402381,
+      "tag": "0012_deep_wilson_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1780350488455,
+      "tag": "0013_chubby_makkari",
+      "breakpoints": true
     }
   ]
 }
