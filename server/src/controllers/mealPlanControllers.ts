@@ -17,7 +17,7 @@ type MealPlanContent = {
     startDate?: string,
 }
 
-export async function getMealPlan(req: Request<{}, unknown, {}, MealPlanContent>, res: Response) {
+export async function getMealPlans(req: Request<{}, unknown, {}, MealPlanContent>, res: Response) {
     const { name, recipe } = req.query
 
     try {
@@ -295,6 +295,10 @@ export async function deleteMealPlan(req: Request<{id: string}, unknown, {}, {}>
                 id: mealPlans.id,
                 name: mealPlans.name
             })
+        
+        if (!deletedMealPlan) {
+            return res.status(404).json({ message: "Meal plan does not exist" })
+        }
         
         return res.status(200).json({
             message: "Meal plan deleted successfully", 

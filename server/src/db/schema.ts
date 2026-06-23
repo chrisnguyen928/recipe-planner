@@ -58,6 +58,7 @@ export const mealPlanEntries = pgTable('meal_plan_entries', {
 export const groceryLists = pgTable('grocery_lists', {
     id: serial('id').primaryKey(),
     userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    name: varchar('name', { length: 200 }).unique().notNull(),
     generatedAt: timestamp('generated_at').defaultNow()
 })
 

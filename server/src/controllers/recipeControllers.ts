@@ -308,6 +308,10 @@ export async function deleteRecipe(req: Request<{id: string}, unknown, {}, {}>, 
             name: recipes.name
         })
 
+        if (!deletedRecipe) {
+            return res.status(404).json({ message: "Recipe does not exist" })
+        }
+
         return res.status(200).json({
             message: "Recipe successfully deleted",
             deleted: deletedRecipe

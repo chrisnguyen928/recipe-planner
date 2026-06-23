@@ -1,9 +1,9 @@
 import express from 'express'
-import { getMealPlan, createMealPlan, updateMealPlan, deleteMealPlan } from '../controllers/mealPlanControllers'
+import { getMealPlans, createMealPlan, updateMealPlan, deleteMealPlan } from '../controllers/mealPlanControllers'
 
 const router = express.Router()
 
-router.get('/', getMealPlan)
+router.get('/', getMealPlans)
 
 router.post('/', createMealPlan)
 
