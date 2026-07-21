@@ -13,7 +13,7 @@ type IngredientContent = {
 type RecipeContent = {
     name?: string,
     description?: string,
-    ingredient?: IngredientContent[],
+    ingredientInputs?: IngredientContent[],
     quantity?: number,
     prepTime?: number,
     cookTime?: number,
@@ -21,13 +21,13 @@ type RecipeContent = {
 }
 
 export async function getRecipes(req: Request<{}, unknown, {}, RecipeContent>, res: Response) {
-    const { name, ingredient, prepTime, cookTime } = req.query
+    const { name, ingredientInputs, prepTime, cookTime } = req.query
 
     try {
         const conditions = []
 
         if (name) {
-            conditions.push(ilike(recipes.name, `%${name}$%`))
+            conditions.push(ilike(recipes.name, `%${name}%`))
         }
 
         if (prepTime) {
@@ -38,11 +38,11 @@ export async function getRecipes(req: Request<{}, unknown, {}, RecipeContent>, r
             conditions.push(lte(recipes.cookTime, cookTime))
         }
 
-        if (ingredient) {
+        if (ingredientInputs) {
             const [foundIngredient] = await db
                 .select()
                 .from(ingredients)
-                .where(ilike(ingredients.name, `%${ingredient}%`))
+                .where(ilike(ingredients.name, `%${ingredientInputs}%`))
                 .limit(1)
 
             if (foundIngredient) {
@@ -80,7 +80,7 @@ export async function getRecipes(req: Request<{}, unknown, {}, RecipeContent>, r
 }
 
 export async function createRecipe(req: Request<{}, unknown, RecipeContent, {}>, res: Response) {
-    const { name, description, ingredient: ingredientInputs, prepTime, cookTime, servings } = req.body
+    const { name, description, ingredientInputs, prepTime, cookTime, servings } = req.body
 
     if (!name || !ingredientInputs || ingredientInputs.length === 0) {
         return res.status(400).json({ message: "Recipe name and ingredients are required" })
@@ -174,7 +174,7 @@ export async function createRecipe(req: Request<{}, unknown, RecipeContent, {}>,
 
 export async function updateRecipe(req: Request<{id: string}, unknown, RecipeContent, {}>, res: Response) {
     const recipeId = parseInt(req.params.id)
-    const { name, description, ingredient: ingredientInputs, prepTime, cookTime, servings } = req.body
+    const { name, description, ingredientInputs, prepTime, cookTime, servings } = req.body
 
     if (isNaN(recipeId)) {
         return res.status(400).json({ message: "Invalid recipe ID" })

@@ -20,7 +20,7 @@ export const recipes = pgTable('recipes', {
     userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
     name: varchar('name', { length: 200 }).notNull().unique(),
     description: text('description'),
-    prepTime: integer('pre_time'),
+    prepTime: integer('prep_time'),
     cookTime: integer('cook_time'),
     servings: integer('servings'),
     createdAt: timestamp('created_at').defaultNow()

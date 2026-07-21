@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
-import { eq } from 'drizzle-orm'
+import { eq, exists } from 'drizzle-orm'
 import jwt from 'jsonwebtoken'
 
 import { db } from '../db/index'
@@ -102,7 +102,7 @@ export async function loginUser(req: Request<{}, unknown, AuthBody, {}>, res: Re
             return res.status(401).json({ message: "Invalid password" })
         }
 
-        const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET!, { expiresIn: '7d' })
+        const token = jwt.sign({ userId: existingUser.id, email: existingUser.email }, process.env.JWT_SECRET!, { expiresIn: '7d' })
 
         res.status(200).json({
             token,
@@ -115,8 +115,10 @@ export async function loginUser(req: Request<{}, unknown, AuthBody, {}>, res: Re
         })
 
     } catch (err) {
-        console.error('Login error: ', err)
-        return res.status(500).json({ message: "Server is unable to handle request"})
+        console.error('Full error object: ', JSON.stringify(err, null, 2))
+        console.error('Error cause:', (err as any)?.cause)
+        console.error('Error message:', (err as any)?.message)
+        return res.status(500).json({ message: "Server is unable to handle request" })
     }
 }
 
@@ -125,7 +127,33 @@ export async function logoutUser(req: Request, res: Response) {
         res.clearCookie('token')
         res.json({ message: "User logged out successfully" })
     } catch (err) {
-        console.error('Failed to log out user: ', err)
+        console.error('Full error object: ', JSON.stringify(err, null, 2))
+        console.error('Error cause:', (err as any)?.cause)
+        console.error('Error message:', (err as any)?.message)
+        return res.status(500).json({ message: "Server is unable to handle request" })
+    }
+}
+
+export async function verifyUser(req: Request, res: Response) {
+    try {
+        const [existingUser] = await db 
+            .select()
+            .from(users)
+            .where(eq(users.id, req.user!.userId))
+            .limit(1)
+
+        if(!existingUser) {
+            return res.status(404).json({ message: "User not found" })
+        }
+
+        return res.status(200).json({
+            id: existingUser.id,
+            email: existingUser.email
+        })
+    } catch (err) {
+        console.error('Full error object: ', JSON.stringify(err, null, 2))
+        console.error('Error cause:', (err as any)?.cause)
+        console.error('Error message:', (err as any)?.message)
         return res.status(500).json({ message: "Server is unable to handle request" })
     }
 }
